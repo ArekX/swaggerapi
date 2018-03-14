@@ -22,7 +22,16 @@ class SwaggerAPI(object):
                 self.parse_file(file)
 
     def _get_parser_name(self, parse_line):
-        return re.search(r'^[a-z0-9-]+/', parse_line).group()[:-1]
+        result = re.search(r'^[a-z0-9-]+/', parse_line)
+
+        if result is None:
+            return None
+
+        return result.group()[:-1]
+
+    def _get_prop_info(self, prop_line):
+        data = prop_line.split(':')
+        return data[0], ":".join(data[1:]).strip()
 
     def parse_file(self, filename):
         f = open(filename, "r")
@@ -39,30 +48,30 @@ class SwaggerAPI(object):
 
             check_parser = self._get_parser_name(parse_lines[0])
 
-            group = []
+            group = [check_parser]
 
             for line in parse_lines:
                 line_parser = self._get_parser_name(line)
                 
                 if line_parser != check_parser:
                    parse_groups.append(group)
-                   group = []
+                   group = [line_parser]
                    check_parser = line_parser
 
-                group.append(line)
+                group.append(self._get_prop_info(line[(len(line_parser) + 1):]))
 
             if len(group) > 0:
                 parse_groups.append(group)
 
 
         for group in parse_groups:
-            parser = self._get_parser_name(group[0])
+            parser = group[0]
 
             if parser not in parsers:
                 raise Exception("Parser is not available for '{0}'".format(parser))
 
             parser = parsers[parser]
 
-            data = parser(group)
+            data = parser(group[1:])
 
-            print "for", "\n".join(group), "got", data
+            print group
