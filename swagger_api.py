@@ -17,7 +17,7 @@ class SwaggerAPI(object):
     def parse(self, globs):
         for glob_search in globs:
             files = glob(glob_search)
-            
+
             for file in files:
                 self.parse_file(file)
 
@@ -52,7 +52,7 @@ class SwaggerAPI(object):
 
             for line in parse_lines:
                 line_parser = self._get_parser_name(line)
-                
+
                 if line_parser != check_parser:
                    parse_groups.append(group)
                    group = [line_parser]
@@ -74,4 +74,4 @@ class SwaggerAPI(object):
 
             data = parser(group[1:])
 
-            print group
+            print(group)
