@@ -72,6 +72,4 @@ class SwaggerAPI(object):
 
             parser = parsers[parser]
 
-            data = parser(group[1:])
-
-            print(group)
+            parser(group[1:], self.spec)

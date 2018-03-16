@@ -1,2 +1,2 @@
-def parse(group):
+def parse(group, spec):
     return []
