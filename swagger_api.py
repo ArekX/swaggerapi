@@ -36,7 +36,7 @@ class SwaggerAPI(object):
     def parse_file(self, filename):
         f = open(filename, "r")
         data = f.read()
-        f.close
+        f.close()
 
         parse_groups = []
 
@@ -51,6 +51,11 @@ class SwaggerAPI(object):
             group = [check_parser]
 
             for line in parse_lines:
+                if line == '/{0}'.format(check_parser):
+                    parse_groups.append(group)
+                    group = [check_parser]
+                    continue
+
                 line_parser = self._get_parser_name(line)
 
                 if line_parser != check_parser:

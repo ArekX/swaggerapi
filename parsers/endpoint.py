@@ -1,5 +1,5 @@
-from .def_line import parse_line, var_regex
-from .def_var import parse_vardef
+from .def_line import parse_line
+from .def_var import parse_vardef, var_regex
 import re
 
 
@@ -34,7 +34,7 @@ def parse(group, spec):
             query_param = parse_line(line)
 
             if query_param is not None:
-                query_params.append(line)
+                query_params.append(query_param)
 
         if param == "inbody":
             body_param = parse_vardef(line)
@@ -61,16 +61,24 @@ def parse(group, spec):
         paths[endpoint] = {}
 
     if method not in paths[endpoint]:
-        paths[endpoint][method] = {}
+        paths[endpoint][method.lower()] = {}
 
+    path = paths[endpoint][method.lower()]
 
-    # TODO: Finish this
+    path["summary"] = desc
+    path["responses"] = {}
 
-    print to, responses, body_params
+    for response in responses:
+        code, var_def, desc = response
+
+        path["responses"][code] = {
+            "description": desc
+        }
+
+    print method, endpoint, path
 
 
 def parse_to_line(to_line):
-    line_def = dict()
     result = re.search('^[A-Z]+ ', to_line)
 
     if result is None:
@@ -91,7 +99,6 @@ def parse_to_line(to_line):
     return method, endpoint, desc
 
 def parse_response(line):
-    line_def = dict()
     result = re.search('^\d+ ', line)
 
     if result is None:

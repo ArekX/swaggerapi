@@ -1,12 +1,12 @@
 import re
-from def_var import parse_vardef
 
-var_regex = r'^[a-zA-Z0-9_-]+(\[\])?(:enum\(.+?\)(=.+?)?)? '
+from def_var import parse_vardef, var_regex
+
 
 def parse_line(string):
     deftype = dict()
 
-    varname = re.search("^.+?\ ", string).group()[:-1]
+    varname = re.search("^.+? ", string).group()[:-1]
 
     deftype["name"] = varname
     deftype["required"] = True
@@ -26,6 +26,6 @@ def parse_line(string):
 
     deftype["vartype"] = parse_vardef(rest)
 
-    deftype["desc"] =  string[(len(varname) + len(rest) + 2):]
+    deftype["desc"] =  string[(len(rest) + 1):]
 
     return deftype
